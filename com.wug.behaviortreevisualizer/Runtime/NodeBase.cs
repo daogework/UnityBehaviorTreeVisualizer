@@ -16,10 +16,25 @@ namespace WUG.BehaviorTreeVisualizer
     {
         public string Name { get; set; }
         public string StatusReason { get; set; } = "";
-        public List<NodeBase> ChildNodes = new List<NodeBase>();
+        public List<NodeBase> children = new List<NodeBase>();
+        public NodeBase Parent { get => parent; set {
+                if (value != null)
+                {
+                    value.children.Add(this);
+                }else if (parent != null)
+                {
+                    parent.children.Remove(this);
+                }
+                parent = value;
+            } }
+
+
         public NodeStatus LastNodeStatus = NodeStatus.NotRun;
         
         public event NodeStatusChangedEventHandler NodeStatusChanged;
+
+
+        protected NodeBase parent = null;
 
         /// <summary>
         /// Handles invoking the NodeStatusChangedEventHandler delegate.

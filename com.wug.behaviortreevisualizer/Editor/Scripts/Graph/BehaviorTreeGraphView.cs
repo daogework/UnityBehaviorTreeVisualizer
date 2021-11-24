@@ -170,13 +170,13 @@ namespace WUG.BehaviorTreeVisualizer
 
                 decoratorData.Add(fullDetails);
 
-                if (currentNode.ChildNodes.Count == 0)
+                if (currentNode.children.Count == 0)
                 {
                     $"Decorator ({currentNode.GetType().Name}) does not have any children. Nothing will be drawn.".BTDebugLog();
                 }
                 else
                 {
-                    DrawNodes(false, currentNode.ChildNodes[0], colIndex, parentPort, stackNode, null, decoratorData);
+                    DrawNodes(false, currentNode.children[0], colIndex, parentPort, stackNode, null, decoratorData);
                 }
             }
             else
@@ -224,7 +224,7 @@ namespace WUG.BehaviorTreeVisualizer
                     AddElement(node);
                 }
 
-                if (currentNode.ChildNodes.Count > 0)
+                if (currentNode.children.Count > 0)
                 {
                     colIndex++;
 
@@ -248,7 +248,7 @@ namespace WUG.BehaviorTreeVisualizer
                         AddElement(stack);
                     }
 
-                    for (int i = 0; i < currentNode.ChildNodes.Count; i++)
+                    for (int i = 0; i < currentNode.children.Count; i++)
                     {
                         node.AddPort(GeneratePort(node, Direction.Output, Port.Capacity.Multi), (i + 1).ToString(), false);
 
@@ -258,12 +258,12 @@ namespace WUG.BehaviorTreeVisualizer
                         {
                             newStyles.Add("FirstNodeSpacing");
                         }
-                        else if (i == currentNode.ChildNodes.Count - 1)
+                        else if (i == currentNode.children.Count - 1)
                         {
                             newStyles.Add("LastNodeSpacing");
                         }
 
-                        DrawNodes(false, currentNode.ChildNodes[i], colIndex, node.OutputPorts[i], stack, newStyles.ToArray());
+                        DrawNodes(false, currentNode.children[i], colIndex, node.OutputPorts[i], stack, newStyles.ToArray());
                     }
 
                 }
