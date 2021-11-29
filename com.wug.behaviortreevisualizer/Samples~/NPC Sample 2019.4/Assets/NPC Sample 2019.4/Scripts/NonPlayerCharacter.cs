@@ -15,14 +15,26 @@ namespace WUG.BehaviorTreeVisualizer
         PickupItem
     }
 
-    public class NonPlayerCharacter : MonoBehaviour, IBehaviorTree
+    public class NonPlayerCharacter : MonoBehaviour, IBehaviorTree, INodeDrawData
     {
+        public bool useLua = false;
         public NavMeshAgent MyNavMesh { get; private set; }
-        public NodeBase BehaviorTree { get; set; }
+        public NodeBase BehaviorTree { get {
+                if (behaviorTree == null)
+                {
+                    GenerateBehaviorTree();
+                }
+                return behaviorTree;
+            } set {
+                behaviorTree = value;
+            } }
         public NavigationActivity MyActivity { get; set; }
 
+        public float step = 0.5f;
+
         private Coroutine m_BehaviorTreeRoutine;
-        private YieldInstruction m_WaitTime = new WaitForSeconds(.1f);
+
+        private NodeBase behaviorTree;
 
 
         private void Start()
@@ -56,30 +68,36 @@ namespace WUG.BehaviorTreeVisualizer
                 }
 
                 (BehaviorTree as Node).Run();
+                
 
-                yield return m_WaitTime;
+                yield return new WaitForSeconds(step);
             }
         }
 
         private void GenerateBehaviorTree()
         {
-            //BehaviorTree = new Selector("Control NPC",
-            //                    new Sequence("Pickup Item",
-            //                        new IsNavigationActivityTypeOf(NavigationActivity.PickupItem),
-            //                        new Selector("Look for or move to items",
-            //                            new Sequence("Look for items",
-            //                                new Inverter("Inverter",
-            //                                    new AreItemsNearBy(5f)),
-            //                                new SetNavigationActivityTo(NavigationActivity.Waypoint)),
-            //                            new Sequence("Navigate to Item",
-            //                                new NavigateToDestination()))),
-            //                    new Sequence("Move to Waypoint",
-            //                        new IsNavigationActivityTypeOf(NavigationActivity.Waypoint),
-            //                        new NavigateToDestination(),
-            //                        new Timer(2f,
-            //                            new Idle()),
-            //                        new SetNavigationActivityTo(NavigationActivity.PickupItem)));
-            BehaviorTree = FGGame.LuaUtil.CreateTree(this);
+            if (useLua)
+            {
+                BehaviorTree = FGGame.LuaUtil.CreateTree(this);
+                return;
+            }
+            BehaviorTree = new Selector("Control NPC",
+                                new Sequence("Pickup Item",
+                                    new IsNavigationActivityTypeOf(NavigationActivity.PickupItem),
+                                    new Selector("Look for or move to items",
+                                        new Sequence("Look for items",
+                                            new Inverter("Inverter",
+                                                new AreItemsNearBy(5f)),
+                                            new SetNavigationActivityTo(NavigationActivity.Waypoint)),
+                                        new Sequence("Navigate to Item",
+                                            new NavigateToDestination()))),
+                                new Sequence("Move to Waypoint",
+                                    new IsNavigationActivityTypeOf(NavigationActivity.Waypoint),
+                                    new NavigateToDestination(),
+                                    new Timer(2f,
+                                        new Idle()),
+                                    new SetNavigationActivityTo(NavigationActivity.PickupItem)));
+            
         }
 
         public void ForceDrawingOfTree()

@@ -11,17 +11,25 @@ RegisteredNodes={
     Sequence = CS.WUG.BehaviorTreeVisualizer.Sequence,
     Inverter = CS.WUG.BehaviorTreeVisualizer.Inverter,
     IsNavigationActivityTypeOf = CS.WUG.BehaviorTreeVisualizer.IsNavigationActivityTypeOf,
+    SetNavigationActivityTo = CS.WUG.BehaviorTreeVisualizer.SetNavigationActivityTo,
     NavigateToDestination = CS.WUG.BehaviorTreeVisualizer.NavigateToDestination,
     Timer = CS.WUG.BehaviorTreeVisualizer.Timer,
     Idle = CS.WUG.BehaviorTreeVisualizer.Idle,
     AreItemsNearBy = CS.WUG.BehaviorTreeVisualizer.AreItemsNearBy,
 }
 
-function CreateTree(nodedata)
-    print(nodedata.type)
-    local type = RegisteredNodes[nodedata.type]
+function CreateTree(nodedata,debugShowStep)
+    if debugShowStep==nil then
+        debugShowStep = false
+    end
+    -- print('type:',nodedata.type)
+    local type = RegisteredNodes[nodedata.type] or nodedata.type
     local node = type(table.unpack(nodedata.params))
-    node.Name = nodedata.name
+    if node.Name == nil or node.Name == '' then
+        node.Name = nodedata.name
+    end
+    -- node.DebugShowStep=debugShowStep
+    node.DebugShowStep = true
     if nodedata.children then
         for i = 1, #nodedata.children do
             local n = CreateTree(nodedata.children[i])

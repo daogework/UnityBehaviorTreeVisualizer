@@ -1,26 +1,26 @@
 require'NodeUtil'
 
-return Node(Selector,'Control NPC',{
-    Node(Sequence,'Pickup Item',{
+return SelectorNode('Control NPC',{
+    SequenceNode('Pickup Item',{
         LeafNode('IsNavigationActivityTypeOf',CS.WUG.BehaviorTreeVisualizer.NavigationActivity.PickupItem),
-        Node(Selector,'Look for or move to items',{
-            Node(Sequence,"Look for items",{
-                Node(Inverter,'Inverter',{
-                    LeafNode('AreItemsNearBy',0.5)
+        SelectorNode('Look for or move to items',{
+            SequenceNode("Look for items",{
+                InverterNode('Inverter',{
+                    LeafNode('AreItemsNearBy',5)
                 }),
-                LeafNode('IsNavigationActivityTypeOf',CS.WUG.BehaviorTreeVisualizer.NavigationActivity.Waypoint),
+                LeafNode('SetNavigationActivityTo',CS.WUG.BehaviorTreeVisualizer.NavigationActivity.Waypoint),
             }),
-            Node(Sequence,'Navigate to Item',{
+            SequenceNode('Navigate to Item',{
                 LeafNode('NavigateToDestination')
             }),
         }),
     }),
-    Node(Sequence,'Move to Waypoint',{
+    SequenceNode('Move to Waypoint',{
         LeafNode('IsNavigationActivityTypeOf',CS.WUG.BehaviorTreeVisualizer.NavigationActivity.Waypoint),
         LeafNode('NavigateToDestination'),
         Node('Timer',nil,{
             LeafNode('Idle')
         },2.0),
-        LeafNode('IsNavigationActivityTypeOf',CS.WUG.BehaviorTreeVisualizer.NavigationActivity.PickupItem),
+        LeafNode('SetNavigationActivityTo',CS.WUG.BehaviorTreeVisualizer.NavigationActivity.PickupItem),
     }),
 })

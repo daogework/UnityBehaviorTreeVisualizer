@@ -16,3 +16,14 @@ function LeafNode(type,...)
     return Node(type,nil,nil,...)
 end
 
+function SelectorNode(...)
+    return Node(Selector,...)
+end
+
+function SequenceNode(...)
+    return Node(Sequence,...)
+end
+
+function InverterNode(...)
+    return Node(Inverter,...)
+end
